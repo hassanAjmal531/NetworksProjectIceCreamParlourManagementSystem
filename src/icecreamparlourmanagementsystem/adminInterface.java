@@ -7,7 +7,6 @@ package icecreamparlourmanagementsystem;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -15,12 +14,8 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Scanner;
-
-import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
-import com.mongodb.MongoClient;
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 
@@ -30,7 +25,7 @@ import java.io.ObjectInputStream;
  */
 public class adminInterface implements Serializable {
     
-    private MongoClient mongoClient;
+    
     
     public void operations() throws Exception{
         Scanner in = new Scanner(System.in);
@@ -41,6 +36,10 @@ public class adminInterface implements Serializable {
         DatagramSocket cs = new DatagramSocket();
         InetAddress ip = InetAddress.getByName("DESKTOP-0P6U2PV");
         System.out.println(ip);
+        ByteArrayOutputStream bos;
+        ObjectOutputStream oos;
+        DatagramPacket sp;
+        DatagramPacket rp;
 
         
 
@@ -49,7 +48,6 @@ public class adminInterface implements Serializable {
         byte data[];
 
         while(true)
-            
         {
                 
                     byte[] sd = new byte[1024];
@@ -58,29 +56,33 @@ public class adminInterface implements Serializable {
                     IceCream iceCream = null;
                     
                    
-                    System.out.println("Enter your choice:\n1. Add IceCream\n2. Search Flavour\n3.View");
+                    System.out.println("Enter your choice press 1, 2, 3 or 4:\n1. Add IceCream\n2. Search Flavour\n3.View\n4. Exit");
                     Choice= in.nextInt();
                     switch(Choice){
                         case 1:
+                            
                             System.out.println("Enter:\n1.id\n2.flavour\n3.price");
                             iceCream = new IceCream(in.nextInt(), in.next(), in.nextInt(), Choice);
-                            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                            ObjectOutputStream oos = new ObjectOutputStream(bos);
+                            bos = new ByteArrayOutputStream();
+                            oos = new ObjectOutputStream(bos);
                             oos.writeObject(iceCream);
                             oos.flush();
                             
                             sd = bos.toByteArray();
-                            DatagramPacket sp = new DatagramPacket(sd, sd.length,ip,9876);
+                            sp = new DatagramPacket(sd, sd.length,ip,9876);
                             cs.send(sp);
                             
-                            DatagramPacket rp = new DatagramPacket(rd, rd.length);
+                            rp = new DatagramPacket(rd, rd.length);
                             cs.receive(rp);
                             String ms = new String(rp.getData());
                             System.out.println("From Server: "+ms);
+
                             
                             break;
                         case 2:
                             System.out.println("enter id to search");
+                            
+                            
                             iceCream = new IceCream(in.nextInt(), Choice);
                             
                             bos = new ByteArrayOutputStream();
@@ -95,6 +97,8 @@ public class adminInterface implements Serializable {
                             rp = new DatagramPacket(rd, rd.length);
                             cs.receive(rp);
                             data = rp.getData();
+
+                            
                             
                             try{
                                 ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data));
@@ -102,7 +106,7 @@ public class adminInterface implements Serializable {
                                 Document doc = (Document) o;
                             
                                 System.out.println("Flavour id    FlavourName     Price");
-                                System.out.println(doc.getInteger("id")+"   "+doc.getString("flavour")+"   "+doc.getInteger("price"));
+                                System.out.println(doc.getInteger("id")+"            "+doc.getString("flavour")+"      "+doc.getInteger("price"));
                                 System.out.println();
                             
                             }catch(Exception e){
@@ -141,7 +145,7 @@ public class adminInterface implements Serializable {
                                 System.out.println("Flavour id    FlavourName     Price");
                                 for(IceCream i: record){
                                 
-                                    System.out.println(i.id+"   "+i.iceCream+"   "+i.price);
+                                    System.out.println(i.id+"           "+i.iceCream+"      "+i.price);
                                     
                                 }
                                 
@@ -159,9 +163,10 @@ public class adminInterface implements Serializable {
                             
                         case 4:
                             System.exit(0);
+                            break;
                             
                         default:
-                            break;
+                            System.out.println("please enter correct option");
                             
         }
         

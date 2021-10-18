@@ -37,8 +37,8 @@ public class server  implements Serializable {
                 MongoCursor<Document> iterator ;
                 DatagramPacket sendData ;
                 InetAddress ip;
-                Document doc ;
-                int port ;
+                Document doc;
+                int port;
 		while(true)
 		{
                         
@@ -50,13 +50,13 @@ public class server  implements Serializable {
                     DatagramPacket rp = new DatagramPacket(rd, rd.length);
                     servers.receive(rp);
 
-                    // server recieves data in the form of bytes array/stream
+                   
                     byte[] Data= rp.getData();
 
                     ByteArrayInputStream bin = new ByteArrayInputStream(Data);
                     ObjectInputStream ois = new ObjectInputStream(bin);
                     IceCream iceCream = (IceCream)ois.readObject();
-                    ArrayList<IceCream> PacketData = new ArrayList<IceCream>();
+                    
 
                     
 
@@ -76,7 +76,7 @@ public class server  implements Serializable {
                             ip = rp.getAddress();
                             port = rp.getPort();
                             
-                            sd = "dataAdded".getBytes();
+                            sd = "Data Added in the database".getBytes();
                             
                             
                             sendData = new DatagramPacket(sd,sd.length,ip, port);
@@ -125,34 +125,29 @@ public class server  implements Serializable {
                             cursor = collection.find();
                             iterator = cursor.iterator();
                             int count = 0;
-                            
-                            
-                           // Document record = new Document();
+
+                           
                             ArrayList<IceCream> record = new ArrayList<IceCream>();
                             if(iterator.hasNext()){
-                               // ArrayList<Document> record = new ArrayList<Document>();
+                               
                                 while(iterator.hasNext()){
 
                                     doc = iterator.next();
                                     record.add(new IceCream(doc.getInteger("id"),doc.getString("flavour"),doc.getInteger("price")));
                                     count ++;
 
-
-
-
-
                                 }
-                                 System.out.println(record);
+                                System.out.println(record);
                                  
-                                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                                    ObjectOutputStream oos = new ObjectOutputStream(bos);
-                                    oos.writeObject(record);
-                                    oos.flush();
-                                    oos.close();
-                                    
-                                    
-                                    sd = bos.toByteArray();
-                                    System.out.println(sd);
+                                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                                ObjectOutputStream oos = new ObjectOutputStream(bos);
+                                oos.writeObject(record);
+                                oos.flush();
+                                oos.close();
+
+
+                                sd = bos.toByteArray();
+                                System.out.println(sd);
                                     
 
                             
