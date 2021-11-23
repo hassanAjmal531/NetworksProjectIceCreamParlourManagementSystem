@@ -16,7 +16,8 @@ public class IceCream implements Serializable {
     public int id;
     public String iceCream;
     public int price;
-    int menuItem;
+    public int menuItem;
+    public int stock;
     
     public IceCream(int id, String iceCream, int price, int menuItem) {
     
@@ -25,6 +26,17 @@ public class IceCream implements Serializable {
         this.price = price;
         this.menuItem = menuItem;
     }
+    
+    public IceCream(int id, String iceCream, int price, int menuItem, int stock) {
+    
+        this.id = id;
+        this.iceCream = iceCream;
+        this.price = price;
+        this.menuItem = menuItem;
+        this.stock = stock;
+    }
+    
+    
     
     public IceCream(int id , String iceCream, int price){
         this.id = id;

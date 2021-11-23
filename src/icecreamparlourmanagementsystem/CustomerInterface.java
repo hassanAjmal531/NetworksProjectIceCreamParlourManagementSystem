@@ -21,10 +21,9 @@ import java.io.ObjectInputStream;
 
 /**
  *
- * @author Dell
+ * @author DELL
  */
-public class adminInterface implements Serializable  {
-    
+public class CustomerInterface {
     
     
     public void operations() throws Exception{
@@ -41,54 +40,108 @@ public class adminInterface implements Serializable  {
         DatagramPacket sp;
         DatagramPacket rp;
 
+        
+
+        String s = "Yes";
         System.out.println("this is a client");
         byte data[];
 
         while(true)
         {
-                
+                    
                     byte[] sd = new byte[1024];
                     byte[] rd = new byte[1024];
                     int Choice = 0;
-                    IceCream iceCream = null;
-                    packet packet = null;
-                   try{
-                    System.out.println("Enter your choice press 1, 2, 3 or 4:\n1. Add IceCream\n2. Search Flavour\n3.View\n4. Exit");
+                    IceCream iceCream;
+                    packet packet;
+                    
+                    
+                    
+                    System.out.println("Enter your choice press 1, 2, 3 or 4:\n1. Buy Ice Cream\n2. Search Flavour\n3.View\n4. Exit");
                     Choice= in.nextInt();
+                    
+                            
                     switch(Choice){
                         case 1:
-                            try{
-                            
-                                System.out.println("Enter:\n1.id\n2.flavour\n3.price\n4.stock amount");
-                                iceCream = new IceCream(in.nextInt(), in.next(), in.nextInt(), Choice, in.nextInt());
-                                packet = new packet(iceCream, Choice, true);
+                            int bill=0;
+                            while(true){
+                                System.out.println("Enter ID of flavour you wish to buy");
+                                int stock = 0;
                                 
+                                iceCream = new IceCream(in.nextInt(),Choice);
+                                packet = new packet(iceCream, Choice,false);
                                 bos = new ByteArrayOutputStream();
                                 oos = new ObjectOutputStream(bos);
                                 oos.writeObject(packet);
                                 oos.flush();
-
+                            
                                 sd = bos.toByteArray();
                                 sp = new DatagramPacket(sd, sd.length,ip,9876);
                                 cs.send(sp);
-
+                            
                                 rp = new DatagramPacket(rd, rd.length);
                                 cs.receive(rp);
-                                String ms = new String(rp.getData());
-                                System.out.println("From Server: "+ms);
-                            }catch(Exception e){
-                                e.printStackTrace();
-                                System.out.println("please enter the data in correct format");
-                            }
+                                data = rp.getData();
 
+                                
                             
+                                try{
+                                    ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data));
+                                    Object o = ois.readObject();
+                                    Document doc = (Document) o;
+                                    stock = doc.getInteger("stock");
+                                    if ( stock != 0){
+                                        System.out.println("enter the amount you want to buy");
+                                        int amount = in.nextInt();
+                                        stock = stock-amount;
+                                        if(stock != 0){
+                                            bill = bill +amount*doc.getInteger("price");
+                                            
+                                            System.out.println("Bill="+bill);
+                                            System.out.println("pay amount");
+                                            if(in.next().toLowerCase().equals("y")){
+                                            
+                                                packet = new packet(bill, 4,false);
+                                                bos = new ByteArrayOutputStream();
+                                                oos = new ObjectOutputStream(bos);
+                                                oos.writeObject(packet);
+                                                oos.flush();
+
+                                                sd = bos.toByteArray();
+                                                sp = new DatagramPacket(sd, sd.length,ip,9876);
+                                                cs.send(sp);
+                                            }
+                                          }
+                                        
+                                        
+                                    }else{
+                                        System.out.println("this item is currently unavailable");
+                                    }
+                                    
+                                }catch(Exception e){
+                                    e.printStackTrace();
+                                    System.out.println("no item on menu");            
+                                }
+                                System.out.println("press y if you want to enter another item, else n");
+                                if(in.next().charAt(0)=='y')
+                                    continue;
+                                else{
+                                    System.out.println("Bill="+bill);
+                                    
+                                }
+                                    break;
+                            }
                             break;
+                            
                         case 2:
                             System.out.println("enter id to search");
                             
                             
+                            //iceCream = new packet(in.nextInt(), Choice);
+                            
                             iceCream = new IceCream(in.nextInt(), Choice);
-                            packet = new packet(iceCream,Choice, true);
+                            packet = new packet(iceCream,Choice, false);
+                            
                             bos = new ByteArrayOutputStream();
                             oos = new ObjectOutputStream(bos);
                             oos.writeObject(packet);
@@ -123,9 +176,9 @@ public class adminInterface implements Serializable  {
                             
                             break;
                         case 3:
-                            //iceCream = new IceCream(Choice);
-                            packet = new packet(Choice, true);
+                           /// iceCream = new packet(Choice);
                             System.out.println("please wait the server is processing the data");
+                            packet = new packet(Choice, false);
                             
                             bos = new ByteArrayOutputStream();
                             oos = new ObjectOutputStream(bos);
@@ -150,7 +203,7 @@ public class adminInterface implements Serializable  {
                                 System.out.println("Flavour id    FlavourName     Price");
                                 for(IceCream i: record){
                                 
-                                    System.out.println(i.id+"           "+i.iceCream+"      "+i.price);
+                                   System.out.println(i.id+"           "+i.iceCream+"      "+i.price);
                                     
                                 }
                                 
@@ -178,17 +231,10 @@ public class adminInterface implements Serializable  {
         
        
         
-    }catch(Exception e){
-        e.printStackTrace();
-        System.out.println("please enter 1 or 2 or 3 or 4");
     }
-        }
         
         
     }
     
     
-    
-    
-   
 }

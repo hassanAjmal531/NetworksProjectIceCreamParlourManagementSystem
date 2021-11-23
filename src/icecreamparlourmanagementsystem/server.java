@@ -55,27 +55,34 @@ public class server  implements Serializable {
 
                     ByteArrayInputStream bin = new ByteArrayInputStream(Data);
                     ObjectInputStream ois = new ObjectInputStream(bin);
-                    IceCream iceCream = (IceCream)ois.readObject();
+                  //  IceCream iceCream = (IceCream)ois.readObject();
                     
-                    
-
-                    
-
-
-
-                    //converting the byte stream back to the admin object that was sent from the servers
-
-                    switch(iceCream.menuItem){
+                  packet packet = (packet)ois.readObject();
+                  
+                  if(packet.usertype == true){
+                      switch(packet.choice){
 
                         case 1:
-                            document.append("id", iceCream.id);
-                            document.append("flavour",iceCream.iceCream );
-                            document.append("price", iceCream.price);
-                            
-                            db.getCollection("IceCream").insertOne(document);
-                            
+                            document.append("_id", packet.iceCream.id);
+                            document.append("flavour",packet.iceCream.iceCream );
+                            document.append("price", packet.iceCream.price);
+                            document.append("stock", packet.iceCream.stock);
                             ip = rp.getAddress();
                             port = rp.getPort();
+                            try{
+                            
+                            db.getCollection("IceCream").insertOne(document);
+                            }catch(Exception e){
+                                sd = "please assign unique id to the item".getBytes();
+                            
+                            
+                                sendData = new DatagramPacket(sd,sd.length,ip, port);
+                                servers.send(sendData);
+                                break;
+                                
+                            }
+                            
+                            
                             
                             sd = "Data Added in the database".getBytes();
                             
@@ -88,7 +95,7 @@ public class server  implements Serializable {
                             break;
                         case 2:
                             
-                            b = new BasicDBObject("id", iceCream.id);
+                            b = new BasicDBObject("_id", packet.iceCream.id);
                             cursor = collection.find(b);
                             iterator = cursor.iterator();
                             
@@ -134,7 +141,7 @@ public class server  implements Serializable {
                                 while(iterator.hasNext()){
 
                                     doc = iterator.next();
-                                    record.add(new IceCream(doc.getInteger("id"),doc.getString("flavour"),doc.getInteger("price")));
+                                    record.add(new IceCream(1,doc.getString("flavour"),doc.getInteger("price")));
                                     count ++;
 
                                 }
@@ -167,8 +174,259 @@ public class server  implements Serializable {
                             break;
 
                     }
+                      
+                  }else{
+                      
+                      switch(packet.choice){
+                          
+                          case 1:
+                             b = new BasicDBObject("_id", packet.iceCream.id);
+                            cursor = collection.find(b);
+                            iterator = cursor.iterator();
+                            
+                            if(iterator.hasNext()){
+
+                            
+                                doc = iterator.next();
+                                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                                ObjectOutputStream oos = new ObjectOutputStream(bos);
+                                oos.writeObject(doc);
+                                oos.flush();
+                                
+                                sd = bos.toByteArray();
+                                
+                                System.out.println(doc);
+                            
+                            
+                            }
+                            else{
+                                sd = "record not found".getBytes();
+                                
+                            }
+                            ip = rp.getAddress();
+                            port = rp.getPort();
+                            
+                            sendData = new DatagramPacket(sd,sd.length,ip, port);
+                            servers.send(sendData);
+                            
+                            
+                                
+                            
+                            break;
+                           
+                     
+                          case 2:
+                            
+                            b = new BasicDBObject("_id", packet.iceCream.id);
+                            cursor = collection.find(b);
+                            iterator = cursor.iterator();
+                            
+                            if(iterator.hasNext()){
+
+                            
+                                doc = iterator.next();
+                                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                                ObjectOutputStream oos = new ObjectOutputStream(bos);
+                                oos.writeObject(doc);
+                                oos.flush();
+                                
+                                sd = bos.toByteArray();
+                                
+                                System.out.println(doc);
+                            
+                            
+                            }
+                            else{
+                                sd = "record not found".getBytes();
+                                
+                            }
+                            ip = rp.getAddress();
+                            port = rp.getPort();
+                            
+                            sendData = new DatagramPacket(sd,sd.length,ip, port);
+                            servers.send(sendData);
+                            
+                            
+                                
+                            
+                            break;
+                        
+                        case 3:
+                            cursor = collection.find();
+                            iterator = cursor.iterator();
+                            int count = 0;
+
+                           
+                            ArrayList<IceCream> record = new ArrayList<IceCream>();
+                            if(iterator.hasNext()){
+                               
+                                while(iterator.hasNext()){
+
+                                    doc = iterator.next();
+                                    record.add(new IceCream(1,doc.getString("flavour"),doc.getInteger("price")));
+                                    count ++;
+
+                                }
+                                System.out.println(record);
+                                 
+                                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                                ObjectOutputStream oos = new ObjectOutputStream(bos);
+                                oos.writeObject(record);
+                                oos.flush();
+                                oos.close();
+
+
+                                sd = bos.toByteArray();
+                                System.out.println(sd);
+                                    
+
+                            
+                            }
+                            else{
+                                sd = "record not found".getBytes();
+                                
+                            }
+                            ip = rp.getAddress();
+                            port = rp.getPort();
+                            
+                            sendData = new DatagramPacket(sd,sd.length,ip, port);
+                            servers.send(sendData);
+                            break;
+                            
+                        case 4:
+                            
+                        default:
+                            break;
+                          
+                      }
+                  
+                      
+                  }
+                    
+                    
+
+                    
+
+
+
+                    //converting the byte stream back to the admin object that was sent from the servers
+
+//                    switch(packet.choice){
+//
+//                        case 1:
+//                            document.append("_id", packet.iceCream.id);
+//                            document.append("flavour",packet.iceCream.iceCream );
+//                            document.append("price", packet.iceCream.price);
+//                            ip = rp.getAddress();
+//                            port = rp.getPort();
+//                            try{
+//                            
+//                            db.getCollection("IceCream").insertOne(document);
+//                            }catch(Exception e){
+//                                sd = "please assign unique id to the item".getBytes();
+//                            
+//                            
+//                                sendData = new DatagramPacket(sd,sd.length,ip, port);
+//                                servers.send(sendData);
+//                                break;
+//                                
+//                            }
+//                            
+//                            
+//                            
+//                            sd = "Data Added in the database".getBytes();
+//                            
+//                            
+//                            sendData = new DatagramPacket(sd,sd.length,ip, port);
+//                            servers.send(sendData);
+//                            
+//                            
+//                            System.out.println("data added");
+//                            break;
+//                        case 2:
+//                            
+//                            b = new BasicDBObject("_id", iceCream.id);
+//                            cursor = collection.find(b);
+//                            iterator = cursor.iterator();
+//                            
+//                            if(iterator.hasNext()){
+//
+//                            
+//                                doc = iterator.next();
+//                                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+//                                ObjectOutputStream oos = new ObjectOutputStream(bos);
+//                                oos.writeObject(doc);
+//                                oos.flush();
+//                                
+//                                sd = bos.toByteArray();
+//                                
+//                                System.out.println(doc);
+//                            
+//                            
+//                            }
+//                            else{
+//                                sd = "record not found".getBytes();
+//                                
+//                            }
+//                            ip = rp.getAddress();
+//                            port = rp.getPort();
+//                            
+//                            sendData = new DatagramPacket(sd,sd.length,ip, port);
+//                            servers.send(sendData);
+//                            
+//                            
+//                                
+//                            
+//                            break;
+//                        
+//                        case 3:
+//                            cursor = collection.find();
+//                            iterator = cursor.iterator();
+//                            int count = 0;
+//
+//                           
+//                            ArrayList<IceCream> record = new ArrayList<IceCream>();
+//                            if(iterator.hasNext()){
+//                               
+//                                while(iterator.hasNext()){
+//
+//                                    doc = iterator.next();
+//                                    record.add(new IceCream(doc.getInteger("id"),doc.getString("flavour"),doc.getInteger("price")));
+//                                    count ++;
+//
+//                                }
+//                                System.out.println(record);
+//                                 
+//                                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+//                                ObjectOutputStream oos = new ObjectOutputStream(bos);
+//                                oos.writeObject(record);
+//                                oos.flush();
+//                                oos.close();
+//
+//
+//                                sd = bos.toByteArray();
+//                                System.out.println(sd);
+//                                    
+//
+//                            
+//                            }
+//                            else{
+//                                sd = "record not found".getBytes();
+//                                
+//                            }
+//                            ip = rp.getAddress();
+//                            port = rp.getPort();
+//                            
+//                            sendData = new DatagramPacket(sd,sd.length,ip, port);
+//                            servers.send(sendData);
+//                            break;
+//                        default:
+//                            break;
+//
+//                    }
                 }
                 
         }
+  }
+
         
-}
