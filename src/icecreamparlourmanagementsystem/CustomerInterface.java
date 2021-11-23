@@ -96,24 +96,9 @@ public class CustomerInterface {
                                         stock = stock-amount;
                                         if(stock != 0){
                                             bill = bill +amount*doc.getInteger("price");
-                                            
-                                            System.out.println("Bill="+bill);
-                                            System.out.println("pay amount");
-                                            if(in.next().toLowerCase().equals("y")){
-                                            
-                                                packet = new packet(bill, 4,false);
-                                                bos = new ByteArrayOutputStream();
-                                                oos = new ObjectOutputStream(bos);
-                                                oos.writeObject(packet);
-                                                oos.flush();
 
-                                                sd = bos.toByteArray();
-                                                sp = new DatagramPacket(sd, sd.length,ip,9876);
-                                                cs.send(sp);
                                             }
-                                          }
-                                        
-                                        
+ 
                                     }else{
                                         System.out.println("this item is currently unavailable");
                                     }
