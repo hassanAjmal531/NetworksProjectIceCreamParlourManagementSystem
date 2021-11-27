@@ -25,7 +25,132 @@ import java.io.ObjectInputStream;
  */
 public class Customer {
     
+        public Document search(IceCream iceCream,int choice) throws Exception{
+        
+        BufferedReader ui = new BufferedReader(new InputStreamReader(System.in));
+        DatagramSocket cs = new DatagramSocket();
+        InetAddress ip = InetAddress.getByName("DESKTOP-0P6U2PV");
+        System.out.println(ip);
+        ByteArrayOutputStream bos;
+        ObjectOutputStream oos;
+        DatagramPacket sp;
+        DatagramPacket rp;
+        
+        byte data[];
+
+        while(true)
+        {
+                
+            byte[] sd = new byte[1024];
+            byte[] rd = new byte[1024];
+            
+
+            packet packet = null;
+           
     
+            
+            packet = new packet(iceCream,choice, false);
+            bos = new ByteArrayOutputStream();
+            oos = new ObjectOutputStream(bos);
+            oos.writeObject(packet);
+            oos.flush();
+
+            sd = bos.toByteArray();
+            sp = new DatagramPacket(sd, sd.length,ip,9876);
+            cs.send(sp);
+
+            rp = new DatagramPacket(rd, rd.length);
+            cs.receive(rp);
+            data = rp.getData();
+
+
+
+            try{
+                ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data));
+                Object o = ois.readObject();
+                Document doc = (Document) o;
+
+                
+                cs.close();
+                return doc;
+
+            }catch(Exception e){
+                e.printStackTrace();
+                System.out.println("no record found");
+            }
+        }
+                            
+    }
+    
+    public ArrayList<IceCream> view() throws Exception{
+         BufferedReader ui = new BufferedReader(new InputStreamReader(System.in));
+        DatagramSocket cs = new DatagramSocket();
+        InetAddress ip = InetAddress.getByName("DESKTOP-0P6U2PV");
+        System.out.println(ip);
+        ByteArrayOutputStream bos;
+        ObjectOutputStream oos;
+        DatagramPacket sp;
+        DatagramPacket rp;
+        
+        byte data[];
+
+        while(true)
+        {
+                
+            byte[] sd = new byte[1024];
+            byte[] rd = new byte[1024];
+            
+
+            packet packet = null;
+           
+    
+             packet = new packet(3, false);
+            System.out.println("please wait the server is processing the data");
+
+            bos = new ByteArrayOutputStream();
+            oos = new ObjectOutputStream(bos);
+            oos.writeObject(packet);
+            oos.flush();
+
+            sd = bos.toByteArray();
+            System.out.println(sd);
+            sp = new DatagramPacket(sd, sd.length,ip,9876);
+            cs.send(sp);
+
+            rp = new DatagramPacket(rd, rd.length);
+            cs.receive(rp);
+            data = rp.getData();
+            System.out.println(data);
+
+            try{
+
+                ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data));
+                Object o = ois.readObject();
+                ArrayList<IceCream> record = (ArrayList)o;
+                System.out.println("Flavour id    FlavourName     Price");
+                for(IceCream i: record){
+
+                    System.out.println(i.id+"           "+i.iceCream+"      "+i.price);
+
+                }
+
+                System.out.println();
+
+                cs.close();
+                return record;
+
+
+            }catch(Exception e){
+                e.printStackTrace();
+                System.out.println("no record found");
+            }
+                            
+            
+
+            
+        }
+        
+    }
     public void operations() throws Exception{
         Scanner in = new Scanner(System.in);
         
