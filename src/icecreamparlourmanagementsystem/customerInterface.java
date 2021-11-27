@@ -5,6 +5,7 @@
  */
 package icecreamparlourmanagementsystem;
 
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import org.bson.Document;
@@ -43,6 +44,7 @@ public class customerInterface extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jTextField3 = new javax.swing.JTextField();
+        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -68,6 +70,11 @@ public class customerInterface extends javax.swing.JFrame {
         });
 
         view.setText("view");
+        view.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                viewActionPerformed(evt);
+            }
+        });
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -96,6 +103,13 @@ public class customerInterface extends javax.swing.JFrame {
             }
         });
         jScrollPane1.setViewportView(jTable1);
+
+        jButton2.setText("Exit");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -135,6 +149,10 @@ public class customerInterface extends javax.swing.JFrame {
                             .addComponent(jTextField1)
                             .addComponent(jTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE))
                         .addGap(0, 0, Short.MAX_VALUE))))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(209, 209, 209))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -161,10 +179,12 @@ public class customerInterface extends javax.swing.JFrame {
                             .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addComponent(jButton1)
-                        .addGap(164, 164, 164))
+                        .addGap(91, 91, 91))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addComponent(jButton2)
+                .addGap(41, 41, 41))
         );
 
         pack();
@@ -178,7 +198,7 @@ public class customerInterface extends javax.swing.JFrame {
         // TODO add your handling code here:
         try{
             int id = Integer.valueOf( this.s1.getText());
-            Document doc = new Customer.search(new IceCream(id,2), 2);
+            Document doc = new Customer().search(new IceCream(id,2), 2);
             DefaultTableModel model = (DefaultTableModel) this.jTable1.getModel();
             model.setRowCount(0);
             
@@ -186,14 +206,39 @@ public class customerInterface extends javax.swing.JFrame {
                 doc.getInteger("_id"),
                 doc.getString("flavour"),
                 doc.getInteger("price"),
-                
-            
+
                 });
             
         }catch(Exception e){
             JOptionPane.showMessageDialog(rootPane, "Please enter correct data");
         }
     }//GEN-LAST:event_searchActionPerformed
+
+    private void viewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewActionPerformed
+        // TODO add your handling code here:
+        try{
+           ArrayList<IceCream> record = new Customer().view();
+           DefaultTableModel model = (DefaultTableModel) this.jTable1.getModel();
+           model.setRowCount(0);
+           for(IceCream i : record){
+              model.addRow(new Object[]{
+                i.id,
+                i.iceCream,
+                i.price,
+                i.stock
+                }); 
+           }
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(rootPane, "no record found");
+            
+        }
+    }//GEN-LAST:event_viewActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+        new MainScreen().setVisible(rootPaneCheckingEnabled);
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -232,6 +277,7 @@ public class customerInterface extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

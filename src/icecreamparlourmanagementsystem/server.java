@@ -263,7 +263,7 @@ public class server  implements Serializable {
                                 while(iterator.hasNext()){
 
                                     doc = iterator.next();
-                                    record.add(new IceCream(1,doc.getString("flavour"),doc.getInteger("price")));
+                                    record.add(new IceCream(doc.getInteger("_id"),doc.getString("flavour"),doc.getInteger("price")));
                                     count ++;
 
                                 }

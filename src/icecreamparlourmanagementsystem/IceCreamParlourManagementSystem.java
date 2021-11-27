@@ -18,33 +18,7 @@ public class IceCreamParlourManagementSystem {
      */
     public static void main(String[] args) throws Exception {
         // TODO code application logic here
-        Scanner inp=new Scanner(System.in);
-        String mod = "";
-        
-        
-        while(true){
-            
-            System.out.println("Enter 1 for Admin module, 2 for Customer module, 3 to exit");
-            mod = inp.nextLine();
-            switch(mod){
-                case "1":
-                    new Admin().operations();
-                    break;
-                case "2":
-                    new Customer().operations();
-                    break;
-                case "3":
-                    System.exit(0);
-                    break;
-                default:
-                    System.out.println("Enter Correct option");
-                    System.out.println("please enter 1 or 2 or 3 \n\n");
-                    
-                    
-            }
-            
-        }
-        
+      new MainScreen().setVisible(true);
     }
     
 }
