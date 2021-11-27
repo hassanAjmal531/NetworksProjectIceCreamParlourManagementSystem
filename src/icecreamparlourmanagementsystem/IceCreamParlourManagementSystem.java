@@ -28,10 +28,10 @@ public class IceCreamParlourManagementSystem {
             mod = inp.nextLine();
             switch(mod){
                 case "1":
-                    new adminInterface().operations();
+                    new Admin().operations();
                     break;
                 case "2":
-                    new CustomerInterface().operations();
+                    new Customer().operations();
                     break;
                 case "3":
                     System.exit(0);

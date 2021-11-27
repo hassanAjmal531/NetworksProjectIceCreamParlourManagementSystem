@@ -23,7 +23,7 @@ import java.io.ObjectInputStream;
  *
  * @author DELL
  */
-public class CustomerInterface {
+public class Customer {
     
     
     public void operations() throws Exception{
@@ -65,6 +65,7 @@ public class CustomerInterface {
                         case 1:
                             int bill=0;
                             while(true){
+                                try{
                                 System.out.println("Enter ID of flavour you wish to buy");
                                 int stock = 0;
                                 
@@ -115,6 +116,9 @@ public class CustomerInterface {
                                     
                                 }
                                     break;
+                                }catch(Exception e){
+                                    System.out.println("please enter a vaild id");
+                                }
                             }
                             break;
                             
