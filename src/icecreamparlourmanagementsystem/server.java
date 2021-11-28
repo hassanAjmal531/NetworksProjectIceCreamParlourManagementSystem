@@ -180,32 +180,18 @@ public class server  implements Serializable {
                       switch(packet.choice){
                           
                           case 1:
+                              try{
                              b = new BasicDBObject("_id", packet.iceCream.id);
-                            cursor = collection.find(b);
-                            iterator = cursor.iterator();
-                            
-                            if(iterator.hasNext()){
+                             BasicDBObject newObj = new BasicDBObject();
+                                newObj.put("$set", new BasicDBObject().append("stock", packet.iceCream.menuItem));
+                                collection.updateOne(b, newObj);
+                              }catch(Exception e){
+                                  sd = "no record found".getBytes();
+                              }
 
-                            
-                                doc = iterator.next();
-                                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                                ObjectOutputStream oos = new ObjectOutputStream(bos);
-                                oos.writeObject(doc);
-                                oos.flush();
-                                
-                                sd = bos.toByteArray();
-                                
-                                System.out.println(doc);
-                            
-                            
-                            }
-                            else{
-                                sd = "record not found".getBytes();
-                                
-                            }
                             ip = rp.getAddress();
                             port = rp.getPort();
-                            
+                            sd = "data added".getBytes();
                             sendData = new DatagramPacket(sd,sd.length,ip, port);
                             servers.send(sendData);
                             

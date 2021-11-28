@@ -35,7 +35,7 @@ public class customerInterface extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        flavour = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         s1 = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
@@ -43,7 +43,7 @@ public class customerInterface extends javax.swing.JFrame {
         view = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        jTextField3 = new javax.swing.JTextField();
+        amount = new javax.swing.JTextField();
         jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -51,6 +51,11 @@ public class customerInterface extends javax.swing.JFrame {
         jLabel1.setText("Flavour ID:");
 
         jButton1.setText("order");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jLabel2.setText("amount");
 
@@ -146,8 +151,8 @@ public class customerInterface extends javax.swing.JFrame {
                             .addComponent(jLabel2))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextField1)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE))
+                            .addComponent(flavour)
+                            .addComponent(amount, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE))
                         .addGap(0, 0, Short.MAX_VALUE))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -172,11 +177,11 @@ public class customerInterface extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel1)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(flavour, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(amount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addComponent(jButton1)
                         .addGap(91, 91, 91))
@@ -240,6 +245,49 @@ public class customerInterface extends javax.swing.JFrame {
         new MainScreen().setVisible(rootPaneCheckingEnabled);
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        Customer customer = new Customer();
+        
+        try{
+            int id = Integer.valueOf( this.flavour.getText());
+            Document doc = customer.search(new IceCream(id,2), 2);
+            DefaultTableModel model = (DefaultTableModel) this.jTable1.getModel();
+            model.setRowCount(0);
+            int bill;
+            int stock = 0;
+            
+            model.addRow(new Object[]{
+                doc.getInteger("_id"),
+                doc.getString("flavour"),
+                doc.getInteger("price"),
+
+                });
+            
+            int amount= Integer.valueOf(this.amount.getText());
+            if(doc.getInteger("stock") < amount){
+                JOptionPane.showMessageDialog(rootPane, String.format("only %d amount is avaible", doc.getInteger("stock")));
+            }else{
+                bill = doc.getInteger("price")*amount;
+                try{
+                    int cash= Integer.valueOf(JOptionPane.showInputDialog(rootPane, String.format("your bill : %d", bill)));
+                    if(cash == bill){
+                        JOptionPane.showMessageDialog(rootPane, "enjoy your ice cream !!!!!!!!");
+                        stock = doc.getInteger("stock") - amount;
+                        customer.updateStock(doc.getInteger("_id"), stock);
+                        
+                    }else{
+                        JOptionPane.showMessageDialog(rootPane, "please enter the corrent amount");
+                    }
+                }catch(Exception e){
+                    JOptionPane.showMessageDialog(rootPane, "please enter the correct amount");
+                }                
+            }
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(rootPane, "sorry this item is currently unavailable");
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -276,6 +324,8 @@ public class customerInterface extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField amount;
+    private javax.swing.JTextField flavour;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
@@ -284,8 +334,6 @@ public class customerInterface extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField s1;
     private javax.swing.JButton search;
     private javax.swing.JButton view;
